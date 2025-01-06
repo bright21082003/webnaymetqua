@@ -1,4 +1,5 @@
 class ProductsController < ApplicationController
+  allow_unauthenticated_access only: %i[ index show ]
   before_action :set_product, only: %i[ show edit update destroy ]
 
   def index
@@ -38,11 +39,14 @@ class ProductsController < ApplicationController
   end
 
   private
-    def set_product
-      @product = Product.find(params[:id])
-    end
 
-    def product_params
-      params.expect(product: [ :name ])
-    end
+  # Set sản phẩm cho các action edit, update, show, destroy
+  def set_product
+    @product = Product.find(params[:id])
+  end
+
+  # Chỉ cho phép các tham số hợp lệ từ form (name, description, featured_image)
+  def product_params
+    params.require(:product).permit(:name, :description, :featured_image)
+  end
 end
